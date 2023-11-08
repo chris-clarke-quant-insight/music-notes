@@ -88,7 +88,7 @@ function scoreToNotes(score) {
     // Get the current token
     var token = tokens[i];
     // If the token is a note
-    if (token.match(/[A-G][#']?\d/)) {
+    if (token.match(/[A-Ga-g][#']?\d/)) {
       // Get the note name and the note length
       var name = token.slice(0, -1);
       var length = token.slice(-1);
@@ -112,7 +112,7 @@ function scoreToNotes(score) {
     // If the token is anything else
     else {
       // Throw an error
-      throw "Invalid token: " + token;
+      throw "Invalid token: " + token + " pos: " + i;
     }
   }
   // Return the notes array

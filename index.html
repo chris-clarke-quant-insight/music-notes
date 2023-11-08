@@ -61,6 +61,12 @@ function noteToFreq(note) {
   // Get the note name and the octave from the input
   var name = note.slice(0, -1);
   var octave = parseInt(note.slice(-1));
+  // If the note name is lower case, subtract one from the octave
+  if (name == name.toLowerCase()) {
+    octave -= 1;
+  }
+  // Convert the note name to upper case
+  name = name.toUpperCase();
   // Get the frequency of the note name
   var freq = noteFreq[name];
   // Adjust the frequency by the octave
@@ -79,11 +85,29 @@ function scoreToNotes(score) {
     "8": 250,
     "16": 125
   };
-  // Split the score by spaces
-  var tokens = score.split(" ");
+  // Split the score by newlines
+  var lines = score.split("\n");
+  // Initialize an empty string to store the notes line
+  var notesLine = "";
+  // Loop through each line in the score
+  for (var i = 0; i < lines.length; i++) {
+    // Get the current line
+    var line = lines[i];
+    // If the line starts with a note or a bar or a repeat sign
+    if (line.match(/^[A-Ga-g|#'0-9|:]/)) {
+      // Append the line to the notes line
+      notesLine += line + " ";
+    }
+    // If the line starts with anything else
+    else {
+      // Ignore the line
+    }
+  }
+  // Split the notes line by spaces
+  var tokens = notesLine.split(" ");
   // Initialize an empty array to store the notes
   var notes = [];
-  // Loop through each token in the score
+  // Loop through each token in the notes line
   for (var i = 0; i < tokens.length; i++) {
     // Get the current token
     var token = tokens[i];
@@ -112,7 +136,7 @@ function scoreToNotes(score) {
     // If the token is anything else
     else {
       // Throw an error
-      throw "Invalid token: " + token + " pos: " + i;
+      throw "Invalid token: " + token;
     }
   }
   // Return the notes array
@@ -120,8 +144,16 @@ function scoreToNotes(score) {
 }
 
 // Define the musical score
-var scoreOld = "X:1 T:Whimsical Tune M:4/4 L:1/8 K:C Q:1/4=120 |:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
-var score = "|:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
+var scoreMeta = `X:1
+T:Whimsical Tune
+M:4/4
+L:1/8
+K:C
+Q:1/4=120
+|:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:|
+|:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|`;
+var score = `|:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:|
+|:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|`;
 // Convert the score to a sequence of notes
 var notes = scoreToNotes(score);
 // Play the sequence of notes

@@ -120,7 +120,8 @@ function scoreToNotes(score) {
 }
 
 // Define the musical score
-var score = "X:1 T:Whimsical Tune M:4/4 L:1/8 K:C Q:1/4=120 |:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
+var scoreOld = "X:1 T:Whimsical Tune M:4/4 L:1/8 K:C Q:1/4=120 |:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
+var score = "|:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
 // Convert the score to a sequence of notes
 var notes = scoreToNotes(score);
 // Play the sequence of notes

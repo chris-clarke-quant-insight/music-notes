@@ -1,0 +1,133 @@
+<html>
+<head>
+<script>
+// A function to create a note object with frequency and duration
+function createNote(freq, dur) {
+  return {frequency: freq, duration: dur};
+}
+
+// A function to play a note object using the Web Audio API
+function playNote (note) {
+  // Create a new AudioContext object
+  var audioCtx = new AudioContext();
+  // Create an oscillator node
+  var oscillator = audioCtx.createOscillator();
+  // Set the oscillator frequency to the note frequency
+  oscillator.frequency.value = note.frequency;
+  // Connect the oscillator to the destination (speakers)
+  oscillator.connect(audioCtx.destination);
+  // Start the oscillator
+  oscillator.start();
+  // Stop the oscillator after the note duration
+  setTimeout(function() {
+    oscillator.stop();
+  }, note.duration);
+}
+
+// A function to play a sequence of notes
+function playSequence(notes) {
+  // Initialize a variable to store the total duration so far
+  var totalDuration = 0;
+  // Loop through each note in the sequence
+  for (var i = 0; i < notes.length; i++) {
+    // Get the current note
+    var note = notes[i];
+    // Set a timeout to play the note after the total duration
+    setTimeout(function(note) {
+      playNote(note);
+    }, totalDuration, note);
+    // Increment the total duration by the note duration
+    totalDuration += note.duration;
+  }
+}
+
+// A function to convert a note name to a frequency in Hz
+function noteToFreq(note) {
+  // Define an object to map note names to frequencies
+  var noteFreq = {
+    "C": 261.63,
+    "C#": 277.18,
+    "D": 293.66,
+    "D#": 311.13,
+    "E": 329.63,
+    "F": 349.23,
+    "F#": 369.99,
+    "G": 392.00,
+    "G#": 415.30,
+    "A": 440.00,
+    "A#": 466.16,
+    "B": 493.88
+  };
+  // Get the note name and the octave from the input
+  var name = note.slice(0, -1);
+  var octave = parseInt(note.slice(-1));
+  // Get the frequency of the note name
+  var freq = noteFreq[name];
+  // Adjust the frequency by the octave
+  freq *= Math.pow(2, octave - 4);
+  // Return the frequency
+  return freq;
+}
+
+// A function to convert a musical score to a sequence of note objects
+function scoreToNotes(score) {
+  // Define an object to map note lengths to durations in ms
+  var noteDur = {
+    "1": 2000,
+    "2": 1000,
+    "4": 500,
+    "8": 250,
+    "16": 125
+  };
+  // Split the score by spaces
+  var tokens = score.split(" ");
+  // Initialize an empty array to store the notes
+  var notes = [];
+  // Loop through each token in the score
+  for (var i = 0; i < tokens.length; i++) {
+    // Get the current token
+    var token = tokens[i];
+    // If the token is a note
+    if (token.match(/[A-G][#']?\d/)) {
+      // Get the note name and the note length
+      var name = token.slice(0, -1);
+      var length = token.slice(-1);
+      // Convert the note name to a frequency
+      var freq = noteToFreq(name);
+      // Convert the note length to a duration
+      var dur = noteDur[length];
+      // Create a note object and push it to the notes array
+      var note = createNote(freq, dur);
+      notes.push(note);
+    }
+    // If the token is a bar
+    else if (token == "|") {
+      // Do nothing
+    }
+    // If the token is a repeat sign
+    else if (token == ":") {
+      // Copy the notes array and append it to itself
+      notes = notes.concat(notes.slice());
+    }
+    // If the token is anything else
+    else {
+      // Throw an error
+      throw "Invalid token: " + token;
+    }
+  }
+  // Return the notes array
+  return notes;
+}
+
+// Define the musical score
+var score = "X:1 T:Whimsical Tune M:4/4 L:1/8 K:C Q:1/4=120 |:G2c2 e2g2|f2d2 c2A2|G2c2 e2g2|f2d2 c4:| |:e2g2 c'2b2|a2g2 f2e2|d2c2 B2A2|G2E2 C4:|";
+// Convert the score to a sequence of notes
+var notes = scoreToNotes(score);
+// Play the sequence of notes
+playSequence(notes);
+</script>
+</head>
+<body>
+<button onclick="playSequence(notes)">Play</button>
+</body>
+</html>
